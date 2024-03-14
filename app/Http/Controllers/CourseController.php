@@ -76,6 +76,7 @@ class CourseController extends Controller
 
     public function storeAsociado(Request $request)
     {
+        
         // Valida los datos recibidos del formulario
         $request->validate([
             'user_id' => 'required|integer|exists:users,id',
@@ -98,4 +99,4 @@ class CourseController extends Controller
         }
     }
 }
-}
+
