@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator; 
 use Illuminate\Support\Facades\Redirect;
 use App\Models\User;
+use App\Models\CouserUser;
+
 
 
 class CourseController extends Controller
@@ -74,29 +76,31 @@ class CourseController extends Controller
         }
     }
 
-    public function storeAsociado(Request $request)
+    public function storeAsoiado(Request $request)
     {
-        
-        // Valida los datos recibidos del formulario
-        $request->validate([
-            'user_id' => 'required|integer|exists:users,id',
-            'course_id' => 'required|integer|exists:courses,id',
-        ]);
 
         try {
-            // Crea una nueva instancia del modelo Asociado
-            $asociado = new CouserUser();
-            $asociado->user_id = $request->user_id;
-            $asociado->course_id = $request->course_id;
-            // Guarda el nuevo asociado en la base de datos
-            $asociado->save();
+            
+            $userCourses = $request->input('userCourses');
 
+            foreach ($userCourses as $association) {
+               
+                $asociado = new CouserUser();
+                $asociado->course_id = $association['course'];
+                $asociado->user_id = $association['user'];
+            
+                $asociado->save();
+            }
+    
             // Retorna una respuesta de éxito
-            return response()->json(['message' => 'Asociación guardada correctamente'], 200);
+            return response()->json(['message' => 'Asociaciones guardadas correctamente'], 200);
         } catch (\Exception $e) {
+
+            dd($e);
             // Retorna una respuesta de error si ocurre algún problema
-            return response()->json(['message' => 'Error al guardar la asociación'], 500);
+            return response()->json(['message' => 'Error al guardar las asociaciones'], 500);
         }
     }
+    
 }
 

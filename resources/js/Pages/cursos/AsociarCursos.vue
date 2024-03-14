@@ -61,6 +61,7 @@ const courses = ref(initialCourses);
 const selectedUser = ref(null);
 const selectedCourse = ref(null);
 const userCourses = ref([]);
+const userCoursesdata = ref([]);
   
   // Función para asociar usuario a curso
   const associateUserToCourse = () => {
@@ -68,6 +69,13 @@ const userCourses = ref([]);
       // Lógica para asociar usuario a curso (puedes implementarla según tu lógica específica)
       userCourses.value.push({ course: `Curso ${selectedCourse.value}`, user: `Usuario ${selectedUser.value}` });
       
+      const association = {
+            course: selectedCourse.value,
+            user: selectedUser.value
+        };
+        
+        userCoursesdata.value.push(association);
+
       // Limpiar la selección después de asociar usuario a curso
       selectedUser.value = null;
       selectedCourse.value = null;
@@ -82,6 +90,7 @@ const userCourses = ref([]);
             console.error('El token CSRF no está disponible en este momento.');
             return;
         }
+  
 
         const response = await fetch('guardar-asociados', {
             method: 'POST',
@@ -90,16 +99,18 @@ const userCourses = ref([]);
                 'X-CSRF-Token': csrfToken,
             },
             body: JSON.stringify({
-                user_id: selectedUser.value,
-                course_id: selectedCourse.value,
+              userCourses: userCoursesdata.value
             }),
         });
 
+        
         if (response.ok) {
             alert('Asociaciones guardadas correctamente.');
             // Limpiar los valores después de guardar
             selectedUser.value = null;
             selectedCourse.value = null;
+            userCourses = [];
+            userCourses=[];
         } else {
             console.error('Error al guardar la asociación:', response.statusText);
             alert('Error al guardar la asociación.');
